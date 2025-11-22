@@ -1,51 +1,8 @@
 {
-  "version": 2,
-  "name": "medicore-frontend",
-  "builds": [
+  "rewrites": [
     {
-      "src": "MediCore-frontend/**/*",
-      "use": "@vercel/static"
+      "source": "/(.*)",
+      "destination": "/MediCore-frontend/$1"
     }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/MediCore-frontend/$1"
-    },
-    {
-      "src": "/",
-      "dest": "/MediCore-frontend/index.html"
-    }
-  ],
-  "headers": [
-    {
-      "source": "/MediCore-frontend/**/*.html",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=86400"
-        }
-      ]
-    },
-    {
-      "source": "/MediCore-frontend/**/*.css",
-      "headers": [
-        {
-          "key": "Cache-Control", 
-          "value": "public, max-age=31536000"
-        }
-      ]
-    },
-    {
-      "source": "/MediCore-frontend/**/*.js",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000"
-        }
-      ]
-    }
-  ],
-  "cleanUrls": true,
-  "trailingSlash": false
+  ]
 }
