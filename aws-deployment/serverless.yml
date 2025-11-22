@@ -1,0 +1,209 @@
+# Serverless Framework configuration for AWS Lambda deployment
+service: medicore-backend
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1  # Use us-east-1 for free tier benefits
+  stage: ${opt:stage, 'prod'}
+  
+  # Environment variables
+  environment:
+    JWT_SECRET: ${env:JWT_SECRET}
+    AWS_ACCESS_KEY_ID: ${env:AWS_ACCESS_KEY_ID}
+    AWS_SECRET_ACCESS_KEY: ${env:AWS_SECRET_ACCESS_KEY}
+    S3_BUCKET: ${env:S3_BUCKET}
+    MISTRAL_API_KEY: ${env:MISTRAL_API_KEY}
+    DYNAMODB_TABLE: ${self:service}-${self:provider.stage}
+    
+  # IAM permissions
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}-*"
+    - Effect: Allow
+      Action:
+        - s3:GetObject
+        - s3:PutObject
+        - s3:DeleteObject
+      Resource: "arn:aws:s3:::${self:provider.environment.S3_BUCKET}/*"
+
+# Functions (API endpoints)
+functions:
+  # Authentication routes
+  authRegister:
+    handler: lambda/auth.register
+    events:
+      - http:
+          path: api/auth/register
+          method: post
+          cors: true
+          
+  authLogin:
+    handler: lambda/auth.login
+    events:
+      - http:
+          path: api/auth/login
+          method: post
+          cors: true
+
+  # Records routes
+  recordsAdd:
+    handler: lambda/records.add
+    events:
+      - http:
+          path: api/records/add
+          method: post
+          cors: true
+          authorizer: auth
+          
+  recordsGet:
+    handler: lambda/records.getMy
+    events:
+      - http:
+          path: api/records/my
+          method: get
+          cors: true
+          authorizer: auth
+
+  # Files routes
+  filesUpload:
+    handler: lambda/files.upload
+    timeout: 30
+    events:
+      - http:
+          path: api/files/upload
+          method: post
+          cors: true
+          authorizer: auth
+          
+  filesGet:
+    handler: lambda/files.getMy
+    events:
+      - http:
+          path: api/files/my
+          method: get
+          cors: true
+          authorizer: auth
+
+  # Consultation routes
+  consultationsSearch:
+    handler: lambda/consultations.searchDoctors
+    events:
+      - http:
+          path: api/consultations/search-doctors
+          method: get
+          cors: true
+          authorizer: auth
+          
+  consultationsRequest:
+    handler: lambda/consultations.request
+    events:
+      - http:
+          path: api/consultations/request/{doctorId}
+          method: post
+          cors: true
+          authorizer: auth
+
+  # Doctor routes
+  doctorPatients:
+    handler: lambda/doctor.getPatients
+    events:
+      - http:
+          path: api/doctor/my-patients
+          method: get
+          cors: true
+          authorizer: auth
+          
+  doctorSummary:
+    handler: lambda/doctor.generateSummary
+    timeout: 30
+    events:
+      - http:
+          path: api/doctor/patient/{patientId}/summary
+          method: get
+          cors: true
+          authorizer: auth
+
+  # Custom authorizer
+  auth:
+    handler: lambda/authorizer.auth
+
+# DynamoDB Tables
+resources:
+  Resources:
+    UsersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}-users
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: email
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: EmailIndex
+            KeySchema:
+              - AttributeName: email
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+            BillingMode: PAY_PER_REQUEST
+        BillingMode: PAY_PER_REQUEST
+        
+    RecordsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}-records
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: userId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: UserIdIndex
+            KeySchema:
+              - AttributeName: userId
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+            BillingMode: PAY_PER_REQUEST
+        BillingMode: PAY_PER_REQUEST
+        
+    FilesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}-files
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: userId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: UserIdIndex
+            KeySchema:
+              - AttributeName: userId
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+            BillingMode: PAY_PER_REQUEST
+        BillingMode: PAY_PER_REQUEST
+
+plugins:
+  - serverless-offline
+  - serverless-dotenv-plugin
