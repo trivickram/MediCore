@@ -26,10 +26,10 @@ app.use(
       "http://127.0.0.1:5500",
       "http://localhost:8080",
       "http://127.0.0.1:8080",
-      "https://medicore-frontend.vercel.app",  // Vercel deployment
-      "https://medicore-frontend-app.vercel.app", // Custom Vercel domain
-      "https://medi-core-eight.vercel.app",           // If you get a custom Vercel domain
-      process.env.FRONTEND_URL                 // Environment variable for flexibility
+      "https://medicore-frontend-app.vercel.app",  // Your Vercel domain 1
+      "https://medi-core-eight.vercel.app",        // Your Vercel domain 2
+      "https://medicore-frontend.vercel.app",      // Fallback domain
+      process.env.FRONTEND_URL                     // Environment variable for flexibility
     ].filter(Boolean), // Remove undefined values
     credentials: true,
   })
