@@ -438,14 +438,20 @@ function attachPatientEventListeners() {
           try {
             const errorData = await res.json();
             errorMessage = errorData.error || errorMessage;
+            if (errorData.details) {
+              console.error("Server error details:", errorData.details);
+              errorMessage += ` Details: ${errorData.details}`;
+            }
           } catch (parseError) {
             // If we can't parse JSON, it might be an HTML error page
             const textResponse = await res.text();
-            console.error("Non-JSON error response:", textResponse);
+            console.error("Non-JSON error response:", textResponse.substring(0, 500));
             if (res.status === 403) {
               errorMessage = "Access denied. Please check your authentication.";
             } else if (res.status === 413) {
               errorMessage = "File too large. Please select a smaller file.";
+            } else if (res.status === 500) {
+              errorMessage = "Server error. Please check server configuration and try again.";
             }
           }
           

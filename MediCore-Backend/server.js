@@ -40,7 +40,11 @@ app.use(
 
 // ✅ Middleware
 app.use(express.json());
-app.use(fileUpload({ useTempFiles: true }));
+app.use(fileUpload({ 
+  useTempFiles: false,  // Don't use temp files on Render
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
+  abortOnLimit: true
+}));
 
 // ✅ Connect to MongoDB
 mongoose
