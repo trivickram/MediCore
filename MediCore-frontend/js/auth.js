@@ -1,7 +1,7 @@
 // Dynamic backend URL detection for different environments
 const backendURL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
   ? "http://localhost:5000"  // Local development
-  : "https://medicore-gebd.onrender.com";  // Production Render URL
+  : "https://medicore-backend.onrender.com";  // Production (update with your Render URL)
 
 function showNotification(message, type = "success") {
   const container = document.getElementById("notification-container");
