@@ -1,8 +1,5 @@
 {
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/MediCore-frontend/$1"
-    }
-  ]
+  "buildCommand": "echo 'No build needed - static files'",
+  "outputDirectory": "MediCore-frontend",
+  "installCommand": "echo 'No install needed'"
 }
