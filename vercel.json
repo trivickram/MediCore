@@ -17,13 +17,35 @@
       "dest": "/MediCore-frontend/index.html"
     }
   ],
-  "functions": {
-    "MediCore-frontend/*.html": {
-      "headers": {
-        "cache-control": "s-maxage=86400"
-      }
+  "headers": [
+    {
+      "source": "/MediCore-frontend/**/*.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400"
+        }
+      ]
+    },
+    {
+      "source": "/MediCore-frontend/**/*.css",
+      "headers": [
+        {
+          "key": "Cache-Control", 
+          "value": "public, max-age=31536000"
+        }
+      ]
+    },
+    {
+      "source": "/MediCore-frontend/**/*.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000"
+        }
+      ]
     }
-  },
+  ],
   "cleanUrls": true,
   "trailingSlash": false
 }
