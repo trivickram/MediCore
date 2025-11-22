@@ -1,0 +1,29 @@
+{
+  "version": 2,
+  "name": "medicore-frontend",
+  "builds": [
+    {
+      "src": "MediCore-frontend/**/*",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/MediCore-frontend/$1"
+    },
+    {
+      "src": "/",
+      "dest": "/MediCore-frontend/index.html"
+    }
+  ],
+  "functions": {
+    "MediCore-frontend/*.html": {
+      "headers": {
+        "cache-control": "s-maxage=86400"
+      }
+    }
+  },
+  "cleanUrls": true,
+  "trailingSlash": false
+}

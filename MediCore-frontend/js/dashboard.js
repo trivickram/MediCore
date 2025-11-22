@@ -1,6 +1,9 @@
 /* START OF FILE dashboard.js */
 
-const backendURL = "http://localhost:5000"; // Local development URL
+// Dynamic backend URL detection for different environments
+const backendURL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? "http://localhost:5000"  // Local development
+  : "https://medicore-gebd.onrender.com";  // Production Render URL
 
 const token = localStorage.getItem("token");
 const userRole = localStorage.getItem("userRole");

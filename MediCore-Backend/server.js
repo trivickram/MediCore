@@ -16,7 +16,7 @@ const patientRoutes = require("./routes/patientRoutes");
 dotenv.config();
 const app = express();
 
-// ✅ Configure CORS to allow only localhost for development
+// ✅ Configure CORS to allow frontend domains
 app.use(
   cors({
     origin: [
@@ -25,8 +25,12 @@ app.use(
       "http://localhost:5500",
       "http://127.0.0.1:5500",
       "http://localhost:8080",
-      "http://127.0.0.1:8080"
-    ],
+      "http://127.0.0.1:8080",
+      "https://medicore-frontend.vercel.app",  // Vercel deployment
+      "https://medicore-frontend-app.vercel.app", // Custom Vercel domain
+      "https://medi-core-eight.vercel.app",           // If you get a custom Vercel domain
+      process.env.FRONTEND_URL                 // Environment variable for flexibility
+    ].filter(Boolean), // Remove undefined values
     credentials: true,
   })
 );
@@ -43,6 +47,16 @@ mongoose
   })
   .then(() => console.log("✅ MongoDB connected"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
+
+// ✅ Health check endpoint for Render
+app.get("/api/auth/health", (req, res) => {
+  res.status(200).json({ 
+    status: "OK", 
+    message: "MediCore Backend is running",
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || "development"
+  });
+});
 
 // ✅ API Routes
 app.use("/api/auth", authRoutes);

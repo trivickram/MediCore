@@ -1,0 +1,39 @@
+# Render.com Deployment Configuration
+# This file configures the backend deployment on Render
+
+services:
+  - type: web
+    name: medicore-backend
+    env: node
+    region: oregon  # Free tier available
+    plan: free     # Use free tier
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/auth/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: MONGODB_URL
+        sync: false  # Set via Render dashboard
+      - key: JWT_SECRET
+        sync: false  # Set via Render dashboard  
+      - key: AWS_ACCESS_KEY_ID
+        sync: false  # Set via Render dashboard
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false  # Set via Render dashboard
+      - key: S3_BUCKET
+        sync: false  # Set via Render dashboard
+      - key: MISTRAL_API_KEY
+        sync: false  # Set via Render dashboard
+    domains:
+      - medicore-backend.onrender.com
+    
+# Database (if using Render's PostgreSQL instead of MongoDB Atlas)
+# databases:
+#   - name: medicore-db
+#     databaseName: medicore
+#     user: medicore_user
+#     region: oregon
+#     plan: free

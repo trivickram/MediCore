@@ -1,0 +1,9 @@
+# MediCore Frontend
+node_modules/
+.env
+.env.local
+.env.production.local
+.env.development.local
+.vercel
+dist/
+build/
