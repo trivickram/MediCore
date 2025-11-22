@@ -1,4 +1,15 @@
 {
-  "buildCommand": "npm run build",
-  "outputDirectory": "MediCore-frontend"
+  "version": 2,
+  "builds": [
+    {
+      "src": "MediCore-frontend/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/MediCore-frontend/$1"
+    }
+  ]
 }
