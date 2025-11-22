@@ -1,5 +1,4 @@
 {
-  "buildCommand": "echo 'No build needed - static files'",
-  "outputDirectory": "MediCore-frontend",
-  "installCommand": "echo 'No install needed'"
+  "buildCommand": "npm run build",
+  "outputDirectory": "MediCore-frontend"
 }
