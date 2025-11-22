@@ -520,7 +520,7 @@ function attachPatientEventListeners() {
                   `${backendURL}/api/consultations/request/${doctorId}`,
                   {
                     method: "POST",
-                    headers: { Authorization: token },
+                    headers: { Authorization: getAuthHeader() },
                   }
                 );
                 const data = await consultRes.json();
@@ -576,7 +576,7 @@ async function fetchPatientDataAndCharts(patientId) {
   try {
     // Fetch Vitals
     const vitalsRes = await fetch(`${backendURL}/api/records/my`, {
-      headers: { Authorization: token },
+      headers: { Authorization: getAuthHeader() },
     });
     const vitals = await vitalsRes.json();
 
@@ -614,7 +614,7 @@ async function fetchPatientDataAndCharts(patientId) {
 
     // Fetch Files
     const filesRes = await fetch(`${backendURL}/api/files/my`, {
-      headers: { Authorization: token },
+      headers: { Authorization: getAuthHeader() },
     });
     const files = await filesRes.json();
 
@@ -643,7 +643,7 @@ async function fetchPatientNotes(patientId) {
     const res = await fetch(
       `${backendURL}/api/patients/${patientId}/notes`, // Corrected route
       {
-        headers: { Authorization: token },
+        headers: { Authorization: getAuthHeader() },
       }
     );
     const notes = await res.json();
@@ -687,7 +687,7 @@ async function fetchMyDoctors() {
     '<p class="loading-text">Loading your doctors...</p>';
   try {
     const res = await fetch(`${backendURL}/api/consultations/my-doctors`, {
-      headers: { Authorization: token },
+      headers: { Authorization: getAuthHeader() },
     });
     const doctors = await res.json();
     if (res.ok) {
@@ -731,7 +731,7 @@ async function fetchMyPrescriptions() {
     const res = await fetch(
       `${backendURL}/api/patients/${userId}/prescriptions`,
       {
-        headers: { Authorization: token },
+        headers: { Authorization: getAuthHeader() },
       }
     );
     const prescriptions = await res.json();
@@ -881,7 +881,7 @@ function attachDoctorStaticEventListeners() {
             query
           )}`,
           {
-            headers: { Authorization: token },
+            headers: { Authorization: getAuthHeader() },
           }
         );
         const patients = await res.json();
@@ -950,7 +950,7 @@ async function fetchPendingConsultations() {
     '<p class="loading-text">Loading pending requests...</p>';
   try {
     const res = await fetch(`${backendURL}/api/consultations/pending`, {
-      headers: { Authorization: token },
+      headers: { Authorization: getAuthHeader() },
     });
     const requests = await res.json();
     if (res.ok && requests.length > 0) {
@@ -1019,7 +1019,7 @@ async function handleConsultationResponse(patientId, action, buttonElement) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: token,
+          Authorization: getAuthHeader(),
         },
         body: JSON.stringify({ action }),
       }
@@ -1047,7 +1047,7 @@ async function fetchMyPatients() {
     '<p class="loading-text">Loading your patients...</p>';
   try {
     const res = await fetch(`${backendURL}/api/doctor/my-patients`, {
-      headers: { Authorization: token },
+      headers: { Authorization: getAuthHeader() },
     });
     const patients = await res.json();
     if (res.ok) {
@@ -1232,7 +1232,7 @@ Amoxicillin 250mg - 1 capsule twice a day" required></textarea>
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Authorization: token,
+              Authorization: getAuthHeader(),
             },
             body: JSON.stringify({ content: noteContent }),
           }
@@ -1272,7 +1272,7 @@ Amoxicillin 250mg - 1 capsule twice a day" required></textarea>
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Authorization: token,
+              Authorization: getAuthHeader(),
             },
             body: JSON.stringify({ medications, instructions }),
           }
@@ -1314,7 +1314,7 @@ Amoxicillin 250mg - 1 capsule twice a day" required></textarea>
         const res = await fetch(
           `${backendURL}/api/doctor/patient/${currentSelectedPatientId}/summary`,
           {
-            headers: { Authorization: token },
+            headers: { Authorization: getAuthHeader() },
           }
         );
         const data = await res.json();
@@ -1354,7 +1354,7 @@ async function fetchPatientVitalsForDoctor(patientId) {
     const res = await fetch(
       `${backendURL}/api/doctor/patient/${patientId}/vitals`,
       {
-        headers: { Authorization: token },
+        headers: { Authorization: getAuthHeader() },
       }
     );
     const vitals = await res.json();
@@ -1404,7 +1404,7 @@ async function fetchPatientFilesForDoctor(patientId) {
     const res = await fetch(
       `${backendURL}/api/doctor/patient/${patientId}/files`,
       {
-        headers: { Authorization: token },
+        headers: { Authorization: getAuthHeader() },
       }
     );
     const files = await res.json();
@@ -1430,7 +1430,7 @@ async function fetchPatientNotesForDoctor(patientId) {
     const res = await fetch(
       `${backendURL}/api/doctor/patient/${patientId}/notes`,
       {
-        headers: { Authorization: token },
+        headers: { Authorization: getAuthHeader() },
       }
     );
     const notes = await res.json();
