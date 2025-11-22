@@ -10,6 +10,12 @@ const userRole = localStorage.getItem("userRole");
 const userName = localStorage.getItem("userName");
 let userId = null; // Will be set after parsing JWT
 
+// Helper function to get properly formatted authorization header
+function getAuthHeader() {
+  const rawToken = localStorage.getItem("token");
+  return rawToken ? `Bearer ${rawToken}` : null;
+}
+
 // Function to parse JWT token and extract payload
 function parseJwt(token) {
   try {
@@ -365,7 +371,7 @@ function attachPatientEventListeners() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: token,
+            Authorization: getAuthHeader(),
           },
           body: JSON.stringify({ bp, sugar, heartRate: hr }),
         });
@@ -405,20 +411,45 @@ function attachPatientEventListeners() {
       setButtonLoading(submitBtn, true);
 
       try {
+        const authHeader = getAuthHeader();
+        if (!authHeader) {
+          showNotification("Authentication required. Please log in again.", "error");
+          return;
+        }
+        
         const res = await fetch(`${backendURL}/api/files/upload`, {
           method: "POST",
           headers: {
-            Authorization: token,
+            Authorization: authHeader,
           },
           body: formData,
         });
-        const data = await res.json();
+        
         if (res.ok) {
+          const data = await res.json();
           showNotification(data.message, "success");
           fileForm.reset();
           await fetchPatientDataAndCharts(userId); // Refresh data
         } else {
-          showNotification(data.error || "Failed to upload file.", "error");
+          console.error("File upload failed with status:", res.status);
+          let errorMessage = "Failed to upload file.";
+          
+          // Try to parse JSON error, but handle HTML responses gracefully
+          try {
+            const errorData = await res.json();
+            errorMessage = errorData.error || errorMessage;
+          } catch (parseError) {
+            // If we can't parse JSON, it might be an HTML error page
+            const textResponse = await res.text();
+            console.error("Non-JSON error response:", textResponse);
+            if (res.status === 403) {
+              errorMessage = "Access denied. Please check your authentication.";
+            } else if (res.status === 413) {
+              errorMessage = "File too large. Please select a smaller file.";
+            }
+          }
+          
+          showNotification(errorMessage, "error");
         }
       } catch (err) {
         console.error("File upload error:", err);
@@ -454,7 +485,7 @@ function attachPatientEventListeners() {
             query
           )}`,
           {
-            headers: { Authorization: token },
+            headers: { Authorization: getAuthHeader() },
           }
         );
         const doctors = await res.json();

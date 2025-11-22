@@ -32,6 +32,9 @@ app.use(
       process.env.FRONTEND_URL                     // Environment variable for flexibility
     ].filter(Boolean), // Remove undefined values
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    exposedHeaders: ['Content-Range', 'X-Content-Range']
   })
 );
 
